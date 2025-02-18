@@ -47,7 +47,7 @@ class Bot(commands.Bot):
             success = False
             while not success:
                 try:
-                    await self.load_extension(f'cogs.{cog_name}.{cog_name}')
+                    await self.load_extension(f'cogs.{cog_name}.main')
                     loaded_cogs.append(cog_name)
                     self.logger.info(f"Loaded {cog_name}'s cog")
                     success = True
@@ -80,7 +80,7 @@ class Bot(commands.Bot):
         # owner = self.application.owner
         # channel = await owner.create_dm()
         # await channel.send(
-        #     f"{box(traceback.format_exc)}" + \
+        #     f"{box(traceback.format_exc())}" + \
         #     f"User: {ctx.author}" + \
         #     f"Content: {ctx.message.content}" + \
         #     f"Args: {error.args}"
