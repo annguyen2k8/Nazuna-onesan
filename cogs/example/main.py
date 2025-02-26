@@ -11,8 +11,7 @@ class ExampleCog(commands.Cog):
     def __init__(self, bot:commands.Bot) -> None:
         self.bot = bot
     
-    @property
-    def uptime(self) -> float:
+    def get_uptime(self) -> float:
         uptime = datetime.datetime.now() - self.bot.start_time
         return uptime.total_seconds()
 
@@ -20,15 +19,15 @@ class ExampleCog(commands.Cog):
     async def ping(self, ctx:commands.Context) -> None:
         await ctx.reply(f"Pong! {round(self.bot.latency*1000)}ms")
     
-    @commands.hybrid_command(description="Only owner use.")
+    @commands.hybrid_command(description="Get install link for your server.")
     @commands.is_owner()
-    async def install_link(self, ctx:commands.Context) -> None:
+    async def link(self, ctx:commands.Context) -> None:
         await ctx.reply(oauth_url(self.bot.application_id))
     
-    @commands.hybrid_command(description="Only owner use.")
+    @commands.hybrid_command(description="Get uptime from bot.")
     @commands.is_owner()
-    async def get_uptime(self, ctx:commands.Context) -> None:
-        await ctx.reply(f"**Uptime:** {format_time(self.uptime)}")
-    
+    async def uptime(self, ctx:commands.Context) -> None:
+        await ctx.reply(f"**Uptime:** {format_time(self.get_uptime())}")
+
 async def setup(bot:commands.Bot) -> None:
     await bot.add_cog(ExampleCog(bot))
