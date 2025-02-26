@@ -8,6 +8,7 @@ import warnings
 import logging
 import datetime
 import traceback
+
 import logging.handlers
 from logging import Logger
 
@@ -18,18 +19,18 @@ from discord.ext import commands
 from utils.formating import *
 
 class Bot(commands.Bot):
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, config:Dict) -> None:
         intents = discord.Intents.all()
         
         self.start_time = datetime.datetime.now()
         super().__init__(
-            command_prefix='!',
-            description=kwargs.pop('description'),
+            command_prefix=config.pop('command_prefix', ['!', '?']),
+            description=config.pop('description', None),
             intents=intents
         )
         self.config = kwargs['config']
         self.logger = set_logger(self)
-        
+    
     async def setup_hook(self) -> None:
         self.loop.create_task(self.load_cogs())     
 
@@ -80,9 +81,9 @@ class Bot(commands.Bot):
         # owner = self.application.owner
         # channel = await owner.create_dm()
         # await channel.send(
-        #     f"{box(traceback.format_exc())}" + \
-        #     f"User: {ctx.author}" + \
-        #     f"Content: {ctx.message.content}" + \
+        #     f"{box(traceback.format_exc())}\n" + \
+        #     f"User: {ctx.author}\n" + \
+        #     f"Content: {ctx.message.content}\n" + \
         #     f"Args: {error.args}"
         #     )
 
@@ -115,12 +116,8 @@ def set_logger(bot:commands.Bot) -> Logger:
     return logger
 
 def start_bot(config) -> None:
-    bot = Bot(
-        config=config,
-        command_prefix=config['command_prefix'],
-        description=config['description']
-        )
-    bot.run(config['token'], log_handler=None)
+    bot = Bot(config)
+    bot.run(config.pop('token'), log_handler=None)
 
 if __name__ == '__main__':
     warnings.filterwarnings('ignore')
