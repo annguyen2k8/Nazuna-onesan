@@ -19,6 +19,7 @@ from discord import app_commands
 from discord.ext import commands
 
 from utils.formating import *
+from utils.mobile import *
 
 class Bot(commands.Bot):
     def __init__(self, config:Dict) -> None:
@@ -30,7 +31,7 @@ class Bot(commands.Bot):
             description=config.pop('description', None),
             intents=intents
         )
-        self.config = kwargs['config']
+        self.config = config
         self.logger = set_logger(self)
     
     async def setup_hook(self) -> None:
@@ -107,6 +108,7 @@ def set_logger(bot:commands.Bot) -> Logger:
     dpy_handler.setFormatter(log_format)
     logger.addHandler(dpy_handler)
     
+    os.makedirs('logs', exist_ok=True)
     fhandler = logging.handlers.RotatingFileHandler(
         filename=f'logs/{bot.start_time.strftime("%Y-%m-%d")}.log',
         maxBytes=10**7,
@@ -123,6 +125,9 @@ def start_bot(config) -> None:
 
 if __name__ == '__main__':
     warnings.filterwarnings('ignore')
-    config = json.loads(open('config.json').read())
     
+    if sys.platform == 'win32':
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    
+    config = json.loads(open('config.json').read())
     start_bot(config)
