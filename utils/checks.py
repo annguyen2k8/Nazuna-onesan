@@ -35,6 +35,15 @@ def has_guild_permissions(*, check=all, **perms):
         return await check_guild_permissions(ctx, perms, check=check)
     return commands.check(pred)
 
+def has_role(*role_ids):
+    async def pred(ctx:commands.Context):
+        if ctx.guild is None:
+            return False
+
+        role = discord.utils.get(ctx.author.roles, id=role_ids)
+        return role is not None
+    return commands.check(pred)
+
 def is_mod():
     async def pred(ctx:commands.Context):
         return await check_guild_permissions(ctx, {'manage_guild': True})

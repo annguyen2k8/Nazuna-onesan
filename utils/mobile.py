@@ -1,3 +1,6 @@
+# https://stackoverflow.com/a/71037799
+# Stackoverflow.com never make me hopeless.
+
 import sys
 import discord
 from discord.gateway import DiscordWebSocket, _log

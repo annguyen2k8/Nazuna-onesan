@@ -30,11 +30,8 @@ def escape(text, *, mass_mentions=False, formatting=False) -> str:
 def escape_mass_mentions(text:str) -> str:
     return escape(text, mass_mentions=True)
 
-def time(timestamp:float) -> str:
-    return "<t:{:1.0f}>".format(timestamp)
+def time(seconds:float) -> str:
+    return "<t:{:1.0f}>".format(seconds)
 
-def format_time(uptime:float) -> str:
-    days, remainder = divmod(uptime, 86400)
-    hours, remainder = divmod(remainder, 3600)
-    minutes, seconds = divmod(remainder, 60)
-    return f"**`{int(days)}d` `{int(hours)}h` `{int(minutes)}m` `{int(seconds)}s`**"
+def format_time(seconds:float) -> str:
+    return "<t:{:1.0f}:R>".format(seconds)

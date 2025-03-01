@@ -10,10 +10,6 @@ from utils.formating import *
 class ExampleCog(commands.Cog):
     def __init__(self, bot:commands.Bot) -> None:
         self.bot = bot
-    
-    def get_uptime(self) -> float:
-        uptime = datetime.datetime.now() - self.bot.start_time
-        return uptime.total_seconds()
 
     @commands.hybrid_command(description="Check latency from the bot to discord.com")
     async def ping(self, ctx:commands.Context) -> None:
@@ -27,7 +23,7 @@ class ExampleCog(commands.Cog):
     @commands.hybrid_command(description="Get uptime from bot.")
     @commands.is_owner()
     async def uptime(self, ctx:commands.Context) -> None:
-        await ctx.reply(f"**Uptime:** {format_time(self.get_uptime())}")
+        await ctx.reply(f"**Uptime:** {format_time(self.bot.start_time.timestamp())}")
 
 async def setup(bot:commands.Bot) -> None:
     await bot.add_cog(ExampleCog(bot))
