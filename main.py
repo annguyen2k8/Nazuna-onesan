@@ -8,7 +8,6 @@ import datetime
 import traceback
 
 from datetime import datetime
-import pytz
 
 from typing import *
 
@@ -17,14 +16,9 @@ import logging.handlers
 from logging import Logger
 
 import discord
-from discord import app_commands
 from discord.ext import commands
-from discord.ext import tasks
 
 from utils.formating import *
-
-# Uncomment if you want to use mobile status for your bot
-# from utils.mobile import *
 
 class Bot(commands.Bot):
     # region Bot.__init__
@@ -36,12 +30,11 @@ class Bot(commands.Bot):
         super().__init__(
             command_prefix=config.pop('command_prefix', ['!', '?']),
             description=config.pop('description', None),
-            intents=intents
+            intents=intents,
+            status=discord.Status.idle
         )
         self.config = config
         self.logger = set_logger(self)
-        
-        self.tz = pytz.timezone('Asia/Tokyo')
     
     # region Bot.setup_hook
     async def setup_hook(self) -> None:
@@ -60,15 +53,19 @@ class Bot(commands.Bot):
         for cog in cogs_directory.iterdir():
             cog_name = cog.name
             amtemp = 0
-            while amtemp < 3:
+            while True:
+                if amtemp == 3:
+                    failed_cogs.append(cog_name)
+                    break
+                
                 try:
                     await self.load_extension(f'cogs.{cog_name}.main')
                     loaded_cogs.append(cog_name)
                     self.logger.info(f"Loaded {cog_name}'s cog")
                     break
                 except Exception as e:
+                    self.logger.exception(traceback.format_exc())
                     self.logger.error(f"Error to load {cog_name} cog")
-                    failed_cogs.append(cog_name)
                     self.logger.exception(e)
                     await asyncio.sleep(5)
                     amtemp += 1
@@ -88,7 +85,6 @@ class Bot(commands.Bot):
         elapsed_time = now - self.start_time
         self.logger.info(f"Logged bot's {self.user} (ID: {self.application.id})")
         self.logger.info(f"Took {round(elapsed_time.total_seconds()*1000)}ms to start")
-        self.status_task.start()
 
     # region Bot.on_command_error
     async def on_command_error(self, ctx:commands.Context, error:commands.errors.CommandError):
@@ -105,15 +101,7 @@ class Bot(commands.Bot):
         #     f"Args: {error.args}"
         #     )
     
-    # region Bot.status_task
-    # Usually online from about 8-9 pm until early morning (around 4-5 am).
-    # A freat dracular roleplay
-    @tasks.loop(minutes=5)
-    async def status_task(self) -> None:
-        hour = datetime.now(tz=self.tz).hour
-        status = discord.Status.online if hour >= 20 or hour <= 4 else discord.Status.idle
-        if self.status != status:
-            await self.change_presence(status=status)
+
 
 # region set_logger
 def set_logger(bot:commands.Bot) -> Logger:
@@ -121,7 +109,6 @@ def set_logger(bot:commands.Bot) -> Logger:
     logger.setLevel(logging.INFO)
     
     while logger.hasHandlers():    logger.setLevel(logging.INFO)
-
 
     log_format = logging.Formatter(
         '{asctime} {levelname:<8} {module}.{funcName} '
@@ -154,10 +141,11 @@ if __name__ == '__main__':
     # Filter warnings
     warnings.filterwarnings('ignore')
     
-    # Avoid event loop error on Windows
+    # Load config and start bot
+    config = json.loads(open('config.json').read())
+    
+    # Set event loop policy for Windows
     if sys.platform == 'win32':
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     
-    # Load config and start bot
-    config = json.loads(open('config.json').read())
     start_bot(config)

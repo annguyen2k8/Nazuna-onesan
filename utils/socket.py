@@ -1,10 +1,13 @@
-# https://stackoverflow.com/a/71037799
-# Stackoverflow.com never make me hopeless.
-
 import sys
+
 import discord
 from discord.gateway import DiscordWebSocket, _log
 
+class DefaultSocket(DiscordWebSocket):
+    pass
+
+# https://stackoverflow.com/a/71037799
+# Stackoverflow.com never make me hopeless.
 class DiscordMobileSocket(DiscordWebSocket):
     async def identify(self):
         payload = {
