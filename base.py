@@ -16,8 +16,6 @@ from logging import Logger
 import discord
 from discord.ext import commands
 
-from utils.formating import *
-
 class BotBase(commands.Bot):
     # region Bot.__init__
     def __init__(self, config:Dict) -> None:
@@ -98,25 +96,23 @@ class BotBase(commands.Bot):
         #     f"Content: {ctx.message.content}\n" + \
         #     f"Args: {error.args}"
         #     )
-    
 
+
+from discord.utils import _ColourFormatter
 
 # region set_logger
 def set_logger(bot:commands.Bot) -> Logger:
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
     
-    while logger.hasHandlers():    logger.setLevel(logging.INFO)
+    while logger.hasHandlers():    
+        logger.setLevel(logging.INFO)
 
-    log_format = logging.Formatter(
-        '{asctime} {levelname:<8} {module}.{funcName} '
-        '{message}',
-        datefmt="[%Y-%m-%d %H:%M:%S]",
-        style='{'
-        )
-    
     dpy_handler = logging.StreamHandler()
-    dpy_handler.setFormatter(log_format)
+    
+    
+    dpy_handler.setFormatter(_ColourFormatter())
+    
     logger.addHandler(dpy_handler)
     
     os.makedirs('logs', exist_ok=True)
@@ -125,7 +121,16 @@ def set_logger(bot:commands.Bot) -> Logger:
         maxBytes=10**7,
         backupCount=5
         )
-    fhandler.setFormatter(log_format)
+    
+    fmt = logging.Formatter(
+        '{asctime} {levelname:<8} {module}.{funcName} '
+        '{message}',
+        datefmt="[%Y-%m-%d %H:%M:%S]",
+        style='{'
+        )
+    
+    
+    fhandler.setFormatter(fmt)
     logger.addHandler(fhandler)
 
     return logger

@@ -6,8 +6,10 @@ import asyncio
 import discord
 from discord.ext import commands
 
+from base import BotBase
+
 class Status(commands.Cog):
-    def __init__(self, bot:commands.Bot):
+    def __init__(self, bot:BotBase):
         self.bot = bot
         
         self.bot.loop.create_task(self.status_task())
@@ -23,5 +25,5 @@ class Status(commands.Cog):
             await self.bot.change_presence(status=status)
             await asyncio.sleep(60)
 
-async def setup(bot:commands.Bot):
+async def setup(bot:BotBase):
     bot.add_cog(Status(bot))

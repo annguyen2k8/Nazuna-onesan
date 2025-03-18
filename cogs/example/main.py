@@ -1,9 +1,8 @@
-import datetime
-
 import discord
 from discord import app_commands
 from discord.ext import commands
-from discord.utils import oauth_url
+
+from discord.utils import *
 
 from utils.formating import *
 
@@ -28,7 +27,7 @@ class ExampleCog(commands.Cog):
     @commands.hybrid_command(description="Get uptime from bot.")
     @commands.is_owner()
     async def uptime(self, ctx:commands.Context) -> None:
-        await ctx.reply(f"**Uptime:** {format_time(self.bot.start_time.timestamp())}")
+        await ctx.reply(f"**Uptime:** {format_dt(self.bot.start_time, 'R')}")
 
 async def setup(bot:BotBase) -> None:
     await bot.add_cog(ExampleCog(bot))

@@ -30,8 +30,8 @@ def escape(text, *, mass_mentions=False, formatting=False) -> str:
 def escape_mass_mentions(text:str) -> str:
     return escape(text, mass_mentions=True)
 
-def time(seconds:float) -> str:
-    return "<t:{:1.0f}>".format(seconds)
+# def time(seconds:float) -> str:
+#     return "<t:{:1.0f}>".format(seconds)
 
-def format_time(seconds:float) -> str:
-    return "<t:{:1.0f}:R>".format(seconds)
+# def format_time(seconds:float) -> str:
+#     return "<t:{:1.0f}:R>".format(seconds)
