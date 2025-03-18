@@ -7,8 +7,10 @@ from discord.utils import oauth_url
 
 from utils.formating import *
 
+from base import BotBase
+
 class ExampleCog(commands.Cog):
-    def __init__(self, bot:commands.Bot) -> None:
+    def __init__(self, bot:BotBase) -> None:
         self.bot = bot
 
     # region ExampleCog.ping
@@ -28,5 +30,5 @@ class ExampleCog(commands.Cog):
     async def uptime(self, ctx:commands.Context) -> None:
         await ctx.reply(f"**Uptime:** {format_time(self.bot.start_time.timestamp())}")
 
-async def setup(bot:commands.Bot):
+async def setup(bot:BotBase) -> None:
     await bot.add_cog(ExampleCog(bot))
